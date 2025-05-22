@@ -1,54 +1,74 @@
 'use client';
 import { ShoppingCart, Heart } from 'lucide-react';
 import Image from "next/image";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ProductDetail from './ProductDetail';
 
 export default function ProductCard({ product }) {
   if (!product) return null;
 
-  const { id, title, description, price, image } = product;
+  const { title, description, price, image } = product;
   const imageUrl = image?.url
-    ? `${process.env.NEXT_PUBLIC_API_URL}${image.url}`
+    ? `${process.env.NEXT_PUBLIC_API_URL || ''}${image.url}`
     : null;
 
   return (
-<div className="bg-white p-0 rounded-2xl shadow-2xl overflow-hidden transition-shadow w-full font-sans">
-      {/* Image and title link to detail page */}
-      <Link href={`/products/${id}`} className="block">
-        {imageUrl && (
-          <div className="relative w-full h-48">
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              className="object-cover rounded-b-xl"
-              priority
-            />
-          </div>
-        )}
-        <div className="p-3">
-          <div className="flex justify-between items-start mb-1">
-            <h3 className="text-[15px] mb-2 uppercase tracking-wide text-gray-800 line-clamp-2">
-              {title}</h3>            
-              <Heart className="w-5 h-5 text-red-500" />
-          </div>
-          <p className="text-[13px] text-gray-400 mb-4 leading-tight line-clamp-2">
-            {description}
-          </p>
-          <p className="text-[rgb(0,127,170)] text-[14px] font-bold">Rs. {price}</p>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 font-sans overflow-hidden w-full">
+      {/* Product Image */}
+      {imageUrl && (
+        <div className="relative w-full h-48">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
-      </Link>
+      )}
 
-      {/* Add to Cart Button outside Link */}
-      <div className="px-3 pb-3">
-        <button
-          className="w-full bg-[rgb(14,104,134)] text-white font-medium py-2 px-2 rounded-md transition-colors flex items-center justify-center gap-2 text-[14px]"
-          onClick={() => alert(`Added ${title} to cart!`)}
-        >
-          <ShoppingCart className="w-4 h-4" />
-          Add To Cart
-        </button>
+      {/* Product Info */}
+      <div className="p-3">
+        <div className="flex justify-between items-start mb-1">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-800 line-clamp-2">
+            {title}
+          </h3>
+          <Heart className="w-5 h-5 text-red-500 cursor-pointer hover:scale-110 transition-transform" />
+        </div>
+        <p className="text-xs text-gray-500 mb-3 leading-tight line-clamp-2">
+          {description}
+        </p>
+        <p className="text-[#007FAA] text-sm font-bold">Rs. {price}</p>
       </div>
+
+      {/* Add to Cart Button + Modal */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="px-3 pb-3">
+            <button
+              className="w-full bg-[#006A84] hover:bg-[#00596e] text-white font-medium py-2 rounded-md flex items-center justify-center gap-2 text-sm transition-colors"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Add To Cart
+            </button>
+          </div>
+        </DialogTrigger>
+
+        <DialogContent className="p-0 max-w-md sm:max-w-lg w-[90vw]">
+          {/* Hidden header for accessibility and hydration integrity */}
+          <DialogHeader className="p-0 hidden">
+            <DialogTitle className="text-base font-semibold hidden">{title}</DialogTitle>
+          </DialogHeader>
+
+          <ProductDetail product={product} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
