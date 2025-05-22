@@ -1,5 +1,5 @@
-import { getProducts } from "@/app/lib/api";
-import ProductCard from "@/app/components/ProductCard";
+import { getProducts } from "../../src/app/lib/api";
+import ProductCard from "../../src/app/components/ProductCard";
 
 export default async function Home() {
   const products = await getProducts();
@@ -16,17 +16,15 @@ export default async function Home() {
         {products.length === 0 ? (
           <p className="text-center">No products available</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-2">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
-            ))}
+              ))}
           </div>
+
         )}
       </main>
 
-      <footer className="mt-16 text-center text-gray-500">
-        <p>© 2025 Domino's Clone. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

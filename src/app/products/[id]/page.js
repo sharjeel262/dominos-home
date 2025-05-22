@@ -1,55 +1,77 @@
-import { getProductById } from "@/app/lib/";
+import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+
+export async function generateStaticParams() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`);
+  const data = await res.json();
+
+  return data?.data?.map((product) => ({
+    id: product.id.toString(),
+  }));
+}
+
+async function getProductById(id) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, {
+    next: { revalidate: 10 }, // Optional caching
+  });
+  const json = await res.json();
+  return json.data;
+}
 
 export default async function ProductDetailPage({ params }) {
-  const product = await getProductById(params.id);
-  if (!product) return notFound();
+  const id = params.id;
+  const product = await getProductById(id);
+
+  if (!product) {
+    return React.createElement("div", { className: "p-8 text-center" }, "Product not found");
+  }
 
   const { title, description, price, image } = product;
-  const imageUrl = image?.url
-    ? `${process.env.NEXT_PUBLIC_API_URL}${image.url}`
-    : '/placeholder-pizza.jpg';
+  const imageUrl = image?.url ? `${process.env.NEXT_PUBLIC_API_URL}${image.url}` : null;
 
-  return (
-    <div className="min-h-screen p-8 pb-20">
-      <header className="mb-8">
-        <Link href="/" className="text-red-600 hover:underline">← Back to Menu</Link>
-        <h1 className="text-3xl font-bold mt-4">{title}</h1>
-      </header>
-
-      <main className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-6">
-            <div className="relative h-64 w-full mb-6">
-              <Image
-                src={imageUrl}
-                alt={title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-            
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold">{title}</h2>
-              <p className="text-gray-600">{description}</p>
-              
-              <div className="flex items-center justify-between mt-8">
-                <span className="text-2xl font-bold">Rs. {price}</span>
-                <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md text-lg transition-colors">
-                  Add to Order Rs. {price}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <footer className="mt-16 text-center text-gray-500">
-        <p>© 2025 Domino's Clone. All rights reserved.</p>
-      </footer>
-    </div>
+  return React.createElement(
+    "div",
+    { className: "max-w-4xl mx-auto p-6 font-sans" },
+    React.createElement(
+      "div",
+      { className: "bg-white rounded-2xl shadow-xl overflow-hidden" },
+      imageUrl &&
+        React.createElement(
+          "div",
+          { className: "relative w-full h-96" },
+          React.createElement(Image, {
+            src: imageUrl,
+            alt: title,
+            fill: true,
+            className: "object-cover",
+            priority: true,
+          })
+        ),
+      React.createElement(
+        "div",
+        { className: "p-6 space-y-4" },
+        React.createElement("h1", { className: "text-3xl font-bold text-gray-800" }, title),
+        React.createElement("p", { className: "text-gray-600 text-sm leading-relaxed" }, description),
+        React.createElement("p", { className: "text-xl font-semibold text-[rgb(0,127,170)]" }, `Rs. ${price}`),
+        React.createElement(
+          "div",
+          { className: "mt-4 flex gap-4" },
+          React.createElement(
+            "button",
+            {
+              className: "bg-[rgb(14,104,134)] text-white py-2 px-6 rounded-md hover:bg-[rgb(0,90,120)] transition",
+            },
+            "Add to Cart"
+          ),
+          React.createElement(
+            "button",
+            {
+              className: "border border-red-500 text-red-500 py-2 px-6 rounded-md hover:bg-red-50 transition",
+            },
+            "❤️ Favorite"
+          )
+        )
+      )
+    )
   );
 }
