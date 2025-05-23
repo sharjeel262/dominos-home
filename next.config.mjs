@@ -1,6 +1,28 @@
 // next.config.mjs
-export default {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
-    domains: ['localhost'], // or your Strapi domain in production
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'thoughtful-desire-39b287e155.media.strapiapp.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'thoughtful-desire-39b287e155.strapiapp.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
+  },
+  // Enable static optimization
+  output: 'standalone',
+  // Enable image optimization
+  images: {
+    unoptimized: false,
   },
 };
+
+export default nextConfig;

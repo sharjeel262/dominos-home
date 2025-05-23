@@ -5,11 +5,8 @@ import Image from 'next/image';
 const ProductDetail = ({ product }) => {
   if (!product) return null;
 
-  const { title, description, price, image, } = product;
-
-  const imageUrl = image?.url
-    ? `${process.env.NEXT_PUBLIC_API_URL || ''}${image.url}`
-    : null;
+  const { title, description, price, image } = product;
+  const imageUrl = image?.url || null;
 
   const [quantity, setQuantity] = useState(1);
 
@@ -28,8 +25,8 @@ const ProductDetail = ({ product }) => {
             fill
             className="object-cover"
             priority
+            unoptimized
           />
-          
         </div>
       )}
 
@@ -39,7 +36,6 @@ const ProductDetail = ({ product }) => {
         <p className="text-sm text-gray-600 mb-2">{description}</p>
 
         <div className="flex items-center gap-2">
-
           <span className="text-lg font-bold text-[#007FAA]">Rs. {price}</span>
         </div>
       </div>
@@ -70,7 +66,7 @@ const ProductDetail = ({ product }) => {
           className="bg-[#87bdd2] hover:bg-[#006A84] text-white font-semibold px-5 py-2 rounded-md text-sm flex items-center gap-2 transition-colors"
         >
           Add to Order
-          <span className="  font-bold px-3 py-1 rounded text-sm">
+          <span className="font-bold px-3 py-1 rounded text-sm">
             Rs. {total}
           </span>
         </button>

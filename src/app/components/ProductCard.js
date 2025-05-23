@@ -14,9 +14,7 @@ export default function ProductCard({ product }) {
   if (!product) return null;
 
   const { title, description, price, image } = product;
-  const imageUrl = image?.url
-    ? `${process.env.NEXT_PUBLIC_API_URL || ''}${image.url}`
-    : null;
+  const imageUrl = image?.url || null;
 
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 font-sans overflow-hidden w-full">
@@ -29,6 +27,7 @@ export default function ProductCard({ product }) {
             fill
             className="object-cover"
             priority
+            unoptimized
           />
         </div>
       )}
