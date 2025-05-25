@@ -9,9 +9,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductDetail from './ProductDetail';
+import { useState } from 'react';
 
 export default function ProductCard({ product }) {
   if (!product) return null;
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const { title, description, price, image } = product;
   const imageUrl = image?.url || null;
@@ -38,7 +40,15 @@ export default function ProductCard({ product }) {
           <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-800 line-clamp-1">
             {title}
           </h3>
-          <Heart className="w-5 h-5 text-red-500 cursor-pointer hover:scale-110 transition-transform" />
+          <button 
+            onClick={() => setIsFavorite(!isFavorite)}
+            className="focus:outline-none"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart 
+              className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-red-500'} cursor-pointer hover:scale-110 transition-transform`} 
+            />
+          </button>
         </div>
         <p className="text-xs text-gray-500 mb-3 leading-tight line-clamp-2 min-h-[32px]">
           {description}
@@ -57,6 +67,7 @@ export default function ProductCard({ product }) {
               </button>
             </DialogTrigger>
             <DialogContent className="p-0 max-w-md sm:max-w-lg w-[90vw]">
+              <DialogTitle className="sr-only">Product Details</DialogTitle>
               <ProductDetail product={product} />
             </DialogContent>
           </Dialog>
