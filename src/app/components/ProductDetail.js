@@ -9,16 +9,13 @@ const ProductDetail = ({ product }) => {
   const imageUrl = image?.url || null;
 
   const [quantity, setQuantity] = useState(1);
-
-  const increaseQty = () => setQuantity((q) => q + 1);
-  const decreaseQty = () => setQuantity((q) => (q > 1 ? q - 1 : q));
   const total = price * quantity;
 
   return (
     <div className="flex flex-col max-h-[90vh] overflow-y-auto bg-white rounded-xl">
       {/* Image Section */}
       {imageUrl && (
-        <div className="relative w-full h-60 sm:h-72 md:h-80">
+        <div className="relative w-full h-80 sm:h-96 bg-white">
           <Image
             src={imageUrl}
             alt={title}
@@ -45,7 +42,7 @@ const ProductDetail = ({ product }) => {
         {/* Quantity Controls */}
         <div className="flex items-center gap-3">
           <button
-            onClick={decreaseQty}
+            onClick={() => setQuantity(q => q > 1 ? q - 1 : q)}
             className="bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 text-lg flex items-center justify-center font-bold text-gray-600"
             aria-label="Decrease quantity"
           >
@@ -53,7 +50,7 @@ const ProductDetail = ({ product }) => {
           </button>
           <span className="text-base font-semibold">{quantity}</span>
           <button
-            onClick={increaseQty}
+            onClick={() => setQuantity(q => q + 1)}
             className="bg-[#006A84] hover:bg-[#00596e] rounded-full w-8 h-8 text-white text-lg flex items-center justify-center font-bold"
             aria-label="Increase quantity"
           >
